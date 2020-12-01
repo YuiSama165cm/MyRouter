@@ -1,0 +1,64 @@
+//组件在Application和Library之间做到随意切换
+if (app_android.is_application) {
+    apply plugin: 'com.android.application'
+}else{
+    apply plugin: 'com.android.library'
+}
+android {
+    //这儿就可以直接使用app_android里定义的内容，这样有多个模块的gradle就可以统一管理了
+    compileSdkVersion app_android.compileSdkVersion
+    buildToolsVersion app_android.buildToolsVersion
+
+
+    defaultConfig {
+        //Library不能在Gradle文件中有applicationId
+        if (app_android.is_application) {
+            applicationId "com.yui.member"
+        }else{
+        }
+        minSdkVersion 15
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets{
+        main{//表示加载到main这个文件夹的时候的处理操作
+            if (app_android.is_application) {//在不同的情况，加载不同的manifest
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+                //没加这句话之前，只有java的文件夹是蓝色的，加了之后，debug和java都是蓝色的
+                //当编译器运行的时候，就会被加载到，并把它编译成class文件
+                java.srcDirs 'src/main/debug'//因为一般只有src/main/java下的文件，才能被当做java文件处理，加上这句话之后，此文件夹也变成java目录了，下面的内容也可以当做java文件处理
+            }else{
+                manifest.srcFile 'src/main/manifest/AndroidManifest.xml'
+                //此处作为library运行，则不添加java.srcDirs 'src/main/debug'，这样就无须编译debug下的文件
+            }
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation rootProject.ext.dependencies.publicImplementation
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    //注解处理器：每个模块都要进行依赖
+    annotationProcessor project(path:':annotation_compiler')
+
+    rootProject.ext.dependencies.other.each{
+        implementation project(it)//直接用it代替就能遍历
+    }
+}

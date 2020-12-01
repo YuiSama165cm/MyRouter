@@ -1,0 +1,57 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+    defaultConfig {
+        applicationId "com.yui.myrouter"
+        minSdkVersion 15
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            //这句话就会往BuildConfig中添加数据，然后编译过后就可以在代码中获取到,app中直接BuildConfig.is_application获取
+//            //这句话加到哪个module，哪个module就能获取到这个属性
+//            //可以将这个内容放到基础模块中，这样每个引用的模块都能用到
+//            buildConfigField 'boolean','is_application',rootProject.ext.app_android.is_application.toString()
+        }
+//        advanced{
+//            //这句话就会往BuildConfig中添加数据，然后编译过后就可以在代码中获取到,app中直接BuildConfig.is_application获取
+//            //这句话加到哪个module，哪个module就能获取到这个属性
+//            //可以将这个内容放到基础模块中，这样每个引用的模块都能用到
+//            buildConfigField 'boolean','is_application',rootProject.ext.app_android.is_application.toString()
+//        }
+//        debug{
+//            //这句话就会往BuildConfig中添加数据，然后编译过后就可以在代码中获取到,app中直接BuildConfig.is_application获取
+//            //这句话加到哪个module，哪个module就能获取到这个属性
+//            //可以将这个内容放到基础模块中，这样每个引用的模块都能用到
+//            buildConfigField 'boolean','is_application',rootProject.ext.app_android.is_application.toString()
+//        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation rootProject.ext.dependencies.publicImplementation
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    //注解处理器：每个模块都要进行依赖
+    annotationProcessor project(path:':annotation_compiler')
+
+//    implementation project (rootProject.ext.dependencies.other)//这个写法，会只有最后一个生效，所以要用for循环遍历来取
+    if (!app_android.is_application) {
+        implementation project (path: ':login')
+        implementation project (path: ':member')
+    }
+
+    rootProject.ext.dependencies.other.each{
+        implementation project(it)//直接用it代替就能遍历
+    }
+}

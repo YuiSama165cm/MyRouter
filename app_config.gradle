@@ -1,0 +1,67 @@
+//自己新建一个gradle，名字可以自己起
+//把其他的gradle中公用的，可扩展的，加入进来，统一管理
+//管理整个App项目的配置文件
+//ext 自定义增加我们的内容
+
+ext {
+    username = "Shao"
+
+
+    //Gradle中的版本号的统一管理
+    //定义 key value,外边的大类型最好名字不一样，防止重名，例如这边的app_android
+    app_android=[
+            compileSdkVersion: 29,
+            buildToolsVersion: "29.0.2",
+            minSdkVersion: 15,
+            targetSdkVersion: 29,
+            versionCode: 1,
+            versionName: "1.0",
+            is_application: false,
+            testInstrumentationRunner: "androidx.test.runner.AndroidJUnitRunner"
+
+    ]
+
+    //Gradle中的版本号的统一管理
+    //依赖相关的(dependencies中的内容)方式一
+    dependencies = [
+            publicImplementation:[
+                    'com.github.bumptech.glide:glide:4.4.0',
+                    'androidx.appcompat:appcompat:1.2.0',
+                    'androidx.constraintlayout:constraintlayout:2.0.1',
+            ],
+
+//            other:['project(path: \':basic\')',
+//                   'project(path: \':common\')']//project是关键字，这样会导致不生效
+
+//            //这个写法，会出现只有最后一个引用成功的情况
+//            other : [path: ':common',
+//                     path: ':basic']
+
+            other : [':common',
+                     ':basic',
+                     ':arouter',
+                     ':annotation']
+
+
+
+            //把project直接放外边
+    ]
+
+    //依赖相关的(dependencies中的内容)方式二
+    app_impl = [
+//            implementation 'androidx.appcompat:appcompat:1.2.0'
+//            testImplementation 'junit:junit:4.12'
+//            androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+//            androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+        "appcompat": 'androidx.appcompat:appcompat:1.2.0',
+        "junit": 'junit:junit:4.12',
+        "extjunit": 'androidx.test.ext:junit:1.1.2',
+        "espresso": 'androidx.test.espresso:espresso-core:3.3.0'
+    ]
+
+    url = [
+            "debug":"http://555.555.555.555//",
+            "release":"http://666.666.666.666//"
+    ]
+}

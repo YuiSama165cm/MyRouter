@@ -1,0 +1,2 @@
+include ':app', ':login', ':member', ':basic', ':common', ':arouter', ':annotation', ':annotation_compiler'
+rootProject.name='MyRouter'

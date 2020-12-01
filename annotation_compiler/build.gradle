@@ -1,0 +1,19 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    //3.4以上AS版本
+    annotationProcessor 'com.google.auto.service:auto-service:1.0-rc4'
+    compileOnly 'com.google.auto.service:auto-service:1.0-rc3'
+    implementation project(path: ':annotation')//注解处理器依赖我们的注解
+
+//    //3.4以下AS版本
+//    implementation 'com.google.auto.service:auto-service:1.0-rc3'
+//    implementation project(path: ':annotation')//注解处理器依赖我们的注解
+
+    implementation 'com.squareup:javapoet:1.13.0'//class生成工具
+}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"
